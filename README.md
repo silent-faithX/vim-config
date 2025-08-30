@@ -1,7 +1,7 @@
 # vim-config Documentation
 
 ## Overview
-This project contains configuration settings for the CoC (Conqueror of Completion) plugin in Vim, specifically tailored for C, C++, Objective-C, and Objective-C++ development using Clangd as the language server.
+This configration file make the termial ide experience like vsCode. 
 
 ## Installation
 - First thing first install vim-plug that can manage all plugins from this github repository `junegunn/vim-plug` refer to the official documentation for installation.
