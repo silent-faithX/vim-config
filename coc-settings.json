@@ -1,0 +1,23 @@
+{
+  "languageserver": {
+    "clangd": {
+      "command": "clangd.exe file path",
+      "rootPatterns": [
+        "compile_flags.txt",
+        "compile_commands.json",
+        ".vim/",
+        ".git/",
+        ".hg/"
+      ],
+      "filetypes": ["c", "cpp", "objc", "objcpp"]
+    }
+  },
+  "suggest.autoTrigger": "always",
+  "suggest.virtualText": true,
+  "suggest.detailField": "preview",
+  "diagnostic.enable": true,
+  "prettier.enable": true,
+  "coc.preferences.formatOnSave": true,
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "black.exe file path"
+}
