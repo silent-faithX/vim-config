@@ -1,230 +1,258 @@
-" ---------------------------
-" Vim Configuration (VS Code + Onedark + Git)
-" ---------------------------
+" Set <space> as the leader key
+" See `:help mapleader`
+let mapleader=' '
+let maplocalleader = ' '
 
+" [[ Setting Neovim default options ]]
+filetype on
 syntax on
-filetype plugin indent on
-set encoding=utf-8
-set number relativenumber
-set cursorline
+set autoindent autoread background=dark
+set backspace=indent,eol,start belloff=all
+set display=lastline encoding=utf-8 hidden
+set history=10000 incsearch
+set nojoinspaces laststatus=2 ruler
+set showcmd smarttab nostartofline
+set switchbuf=uselast wildmenu "wildoptions=pum,tagfile
+
+" Make line numbers default
+set number
+
+"set relativenumber
 set mouse=a
-set termguicolors
-highlight Terminal guifg=White guibg=Black
-"highlight Normal ctermbg=None guibg=NONE
-"highlight! link TermCursor Cursor
-"highlight! TermCursorNC guibg=Grey guifg=Black
-set tabstop=4 shiftwidth=4 expandtab smartindent
-set guifont=FiraCode\ Nerd\ Font:h16
+
+" Don't show the mode, since it's already in the status line
+set noshowmode
+
+" Sync clipboard between OS and Vim.
+set clipboard=unnamedplus
+
+" Enable break indent
+set breakindent
+
+"  NOTE: See `:help undofile` and `:help undodir` for more information
+"    You may change the undodir to another directory you prefer
+"set undodir=~/.local/state/vim/undo//
+"set undofile
+
+" Case-insensitive searching UNLESS \C or capital in search
+set ignorecase
+set smartcase
+
+" utf-8 byte sequence
+set encoding=utf-8
+" Some servers have issues with backup files, see #649
 set nobackup
 set nowritebackup
-set updatetime=300
+
+" Keep signcolumn on by default
 set signcolumn=yes
-set guicursor=n-v-c:block,i-ci:ver25,r-cr:hor20,o:hor50
-set guicursor=a:ver25
 
-" Search
-set ignorecase smartcase hlsearch incsearch
-set laststatus=2 showmode
-" Tab name
-set title
-set titlestring=vim-\ %t
+" Decrease update time
+set updatetime=250
 
-" ---------------------------
-" Plugin Manager (vim-plug)
-" ---------------------------
-call plug#begin('~/.vim/plugged')
+" Decrease mapped sequence wait time
+" Displays vim-which-key sooner
+set timeoutlen=300
 
-" Theme Toktonight
-Plug 'ghifarit53/tokyonight-vim'
-" File Tree
-Plug 'preservim/nerdtree'
-" Terminal inside Vim
-Plug 'voldikss/vim-floaterm'
-" GitHub Copilot
-Plug 'github/copilot.vim'
-" Git Features
-Plug 'tpope/vim-fugitive'        " Git commands
-Plug 'airblade/vim-gitgutter'    " Git diff in gutter
-Plug 'junegunn/gv.vim'           " Git commit browser
-" Lightline
-Plug 'joshdick/onedark.vim'
-Plug 'itchyny/lightline.vim'
-" Completion (VSCode-like)
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'jiangmiao/auto-pairs'
-" Vim-devicon
-Plug 'ryanoasis/vim-devicons'
-" Vim-Comment
+" Configure how new splits should be opened
+set splitright
+set splitbelow
+
+" Sets how Vim will display certain whitespace characters in the editor.
+set list
+set listchars=tab:»\ ,trail:·,nbsp:␣
+" Use the following settings if you do not want unicode characters
+"set listchars=tab:>\ ,trail:-,nbsp:+
+
+" Show which line your cursor is on
+set cursorline
+
+" Minimal number of screen lines to keep above and below the cursor
+set scrolloff=10
+
+" if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
+" instead raise a dialog asking if you wish to save the current file(s)
+" See `:help 'confirm'`
+set confirm
+
+" [[ Install plugins ]]
+call plug#begin()
+" Detect tabstop and shiftwidth automatically
+Plug 'tpope/vim-sleuth'
+
+" "gc" to comment visual regions/lines
 Plug 'tpope/vim-commentary'
 
+" Adds git related signs to the gutter
+Plug 'airblade/vim-gitgutter'
+
+" Useful plugin to show you pending keybinds.
+Plug 'liuchengxu/vim-which-key'
+
+" Fuzzy Finder
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Enable LSP
+Plug 'prabirshrestha/vim-lsp'
+" Install language servers and configure them for vim-lsp
+Plug 'mattn/vim-lsp-settings'
+
+" Autocompletion
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
+" Colorscheme
+Plug 'ghifarit53/tokyonight-vim'
+
+" Set airline as statusline
+Plug 'vim-airline/vim-airline'
+
+" Linting fallback if coc not active
+Plug 'dense-analysis/ale' 
+
+" Auto close brackets
+Plug 'jiangmiao/auto-pairs'
+
+" Mostly out-of-the-box for many languages
+Plug 'sheerun/vim-polyglot'
+
+" Nerd tree
+Plug 'preservim/nerdtree'
 call plug#end()
 
-" ---------------------------
-" Theme Setup
-" ---------------------------
-set termguicolors
 
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
-
+" [[ Configure plugins ]]
+" Set colorscheme
+set termguicolors                   " Enable RGB colors
+let g:tokyonight_style = 'night'    " available: night, storm
+let g:tokyonight_enable_italic = 0  " Disable italics in comments
 colorscheme tokyonight
-" ---------------------------
-" File Tree Keymap
-" ---------------------------
-nnoremap <C-b> :NERDTreeToggle<CR>
-" Enable devicons
-let g:webdevicon_enable = 1
-let g:webdevicon_enable_nerdtree = 1
-let g:webdevicon_enable_ctrlp = 1
-" File tree config
-" Hide help text and only show directory + files
-let NERDTreeMinimalUI=1
 
-" Don’t show extra info (like permissions, size)
-let NERDTreeDirArrows=1
+" [[ Configure vim-which-key ]]
+call which_key#register('<Space>', "g:which_key_map")
+nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
+nnoremap <silent> <localleader> :<c-u>WhichKey  '<Space>'<CR>
 
-" Ignore certain files (optional, like VSCode does by default) -- Your Choice
-" let NERDTreeIgnore=['\.o$', '\~$', '\.exe$', '\.dll$', '\.pyc$', '__pycache__']
+" Document existing key chains
+let g:which_key_map =  {}
+let g:which_key_map.s = { 'name' : '[S]earch' }
+let g:which_key_map.h = { 'name' : 'Git [H]unk' }
 
+" Set airline
+" ─── Theme and Basic Settings ───
+let g:airline_powerline_fonts = 1
+let g:airline_theme = 'tokyonight'
 
-" ---------------------------
-" Terminal Keymaps
-" ---------------------------
-" Floaterm settings
-let g:floaterm_position = 'bottom'   " always open at bottom
-let g:floaterm_height = 0.3          " 30% of screen height like VSCode
-let g:floaterm_width = 1.0           " full width
-let g:floaterm_title = ''            " no title bar (clean look)
-let g:floaterm_autoclose = 1         " close when process exits
+" Always show the statusline
+set laststatus=2
 
-" Keymaps (VSCode style)
-nnoremap <C-`> :FloatermToggle<CR>
-tnoremap <C-`> <C-\><C-n>:FloatermToggle<CR>
+" Enable tabline (shows open buffers)
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 
-" Create new terminal
-nnoremap <leader>tn :FloatermNew<CR>
-" Next terminal (like VSCode terminal tabs)
-nnoremap <leader>tl :FloatermNext<CR>
-" Previous terminal
-nnoremap <leader>tp :FloatermPrev<CR>
-" Kill current terminal
-nnoremap <leader>tk :FloatermKill<CR>
+" ─── Enable useful extensions ───
+let g:airline#extensions#branch#enabled = 1         " Git branch
+let g:airline#extensions#hunks#enabled = 1          " Git changes
+let g:airline#extensions#coc#enabled = 1            " LSP diagnostics (with coc.nvim)
+let g:airline#extensions#virtualenv#enabled = 1     " Python venv name
+let g:airline#extensions#whitespace#enabled = 0     " Disable trailing space warning if annoying
 
-" =============================
-" VSCode-like Key Mappings
-" =============================
+" ─── Customize the sections ───
+" See `:help airline-sections`
+let g:airline_section_a = airline#section#create(['mode'])
+let g:airline_section_b = airline#section#create(['branch'])
+let g:airline_section_c = airline#section#create(['%f'])
+let g:airline_section_x = airline#section#create(['filetype'])
+let g:airline_section_y = airline#section#create_right(['%l:%c'])
+let g:airline_section_z = airline#section#create(['%p%%'])
 
-" Copy (Ctrl+C) in Visual mode
-vnoremap <C-c> "+y
+" ─── Optional: Cleaner inactive windows ───
+let g:airline_inactive_collapse = 1
+let g:airline#extensions#tabline#show_buffers = 1
 
-" Cut (Ctrl+X) in Visual mode
-vnoremap <C-x> "+d
+" ─── Optional: Shorten long paths ───
+let g:airline#extensions#tabline#fnamecollapse = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
 
-" Paste (Ctrl+V) in Normal/Visual/Insert modes
-nnoremap <C-v> "+p
-vnoremap <C-v> "+p
-inoremap <C-v> <C-r>+
+" ─── Highlight tweak for tokyonight ───
+" Makes Airline colors blend better with tokyonight theme
+autocmd ColorScheme * hi! link airline_a_normal PmenuSel
 
-" Select All (Ctrl+A) in Normal mode
-nnoremap <C-a> ggVG
+" [[ Configure fzf.vim ]]
+" See `:help fzf-vim`
+nmap <leader>sh :Helptags<CR>
+let g:which_key_map.s.h = '[S]earch [H]elp'
+nmap <leader>sk :Maps<CR>
+let g:which_key_map.s.k = '[S]earch [K]eymaps'
+nmap <leader>sf :Files<CR>
+let g:which_key_map.s.f = '[S]earch [F]iles'
+nmap <leader>sg :Rg<CR>
+let g:which_key_map.s.g = '[S]earch by [G]rep'
+nmap <leader>s. :History<CR>
+let g:which_key_map.s['.'] = '[S]earch Recent Files ("." for repeat)'
+nmap <leader><leader> :Buffers<CR>
+let g:which_key_map[' '] = '[ ] Find existing buffers'
 
-" Undo (Ctrl+Z)
-nnoremap <C-z> u
-inoremap <C-z> <C-o>u
-
-" Redo (Ctrl+Y)
-nnoremap <C-y> <C-r>
-inoremap <C-y> <C-o><C-r>
-
-" Save (Ctrl+S)
-nnoremap <C-s> :w<CR>
-inoremap <C-s> <Esc>:w<CR>a
-vnoremap <C-s> <Esc>:w<CR>
-
-" Quit (Ctrl+Q)
-nnoremap <C-q> :q<CR>
-
-" New Tab (Ctrl+T)
-nnoremap <C-t> :tabnew<CR>
-
-" Close Tab (Ctrl+W)
-nnoremap <C-w> :tabclose<CR>
-
-" Comment toggle (Ctrl+/) – requires commentary.vim or tcomment
-nnoremap <C-/> :Commentary<CR>
-vnoremap <C-/> :Commentary<CR>
-
-" Toggle comment like VSCode (Ctrl+/)
-nnoremap <C-_> :Commentary<CR>
-vnoremap <C-_> :Commentary<CR>
+nmap <leader>/ :BLines<CR>
+let g:which_key_map['/'] = '[/] Fuzzily search in current buffer'
 
 
-" ---------------------------
-" GitHub Cpilot Setup
-" ---------------------------
-let g:copilot_enabled = 0
-imap <C-i> <Plug>(copilot-suggest)
-imap <CR>   <Plug>(copilot-accept)
+" [[ Configure LSP ]]
+" NOTE: Install new language server using `:LspInstallServer` in the filetype
+" you are trying to install LSP for.
+" For example, if you want LSP server for C/C++, type
+" `:LspInstallServer clangd` in a C/C++ buffer.
 
-" ---------------------------
-" Git Features Setup
-" ---------------------------
+" Performance related settings, requires Vim 8.2+
+let g:lsp_use_native_client = 1
+let g:lsp_semantic_enabled = 1
 
-" Gitgutter signs
-let g:gitgutter_enabled = 1
-let g:gitgutter_highlight_lines = 1
+function! s:on_lsp_buffer_enabled() abort
+  setlocal omnifunc=lsp#complete
+  if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
 
-" Fugitive shortcuts
-nnoremap <leader>gs :Git<CR>           " Git status
-nnoremap <leader>gc :Git commit<CR>    " Git commit
-nnoremap <leader>gp :Git push<CR>      " Git push
-nnoremap <leader>gl :Git pull<CR>      " Git pull
-nnoremap <leader>gb :Git blame<CR>     " Git blame
-nnoremap <leader>gd :Gvdiffsplit<CR>   " Git diff view
+  " Keymaps
+  " These keybindings are default in Neovim
+  nnoremap <buffer> [d <plug>(lsp-previous-diagnostic)
+  nnoremap <buffer> ]d <plug>(lsp-next-diagnostic)
+  " See `:help K` for why this keymap
+  nnoremap <buffer> K <plug>(lsp-hover)
+  nnoremap <buffer> grn <plug>(lsp-rename)
+  nnoremap <buffer> gra <plug>(lsp-code-action-float)
+  nnoremap <buffer> grr <plug>(lsp-references)
+  nnoremap <buffer> gri <plug>(lsp-implementation)
+  nnoremap <buffer> gO <plug>(lsp-document-symbol-search)
+  nnoremap <buffer> <C-s> <plug>(lsp-signature-help)
 
-" Git commit message highlighting
-augroup gitcommit_highlight
-autocmd!
-autocmd FileType gitcommit syntax match gitcommitHeader /^.*/ containedin=gitcommitFirstLine
-autocmd FileType gitcommit highlight gitcommitHeader guifg=#61afef ctermfg=Blue
-augroup END
+  " Other useful functions
+  nnoremap <buffer> grd <plug>(lsp-definition)
+  " In C, this would take you to the header file
+  nnoremap <buffer> grD <plug>(lsp-declaration)
+  nnoremap <buffer> grt <plug>(lsp-peek-type-definition)
+  nnoremap <buffer> gW <plug>(lsp-workspace-symbol-search)
 
-" Linghtline config
-let g:lightline = {
-      \ 'colorscheme': 'onedark',
-      \ }
-
-" ========================
-" VSCode-like Enter behaviour coc.nvim Config
-" ========================
-" Enter = confirm completion if menu open, otherwise newline
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-
-" Tab = next suggestion, or expand snippet, or insert real Tab
-inoremap <silent><expr> <Tab> 
-      \ coc#pum#visible() ? coc#pum#next(1) : 
-      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : 
-      \ CheckBackspace() ? "\<Tab>" : coc#refresh()
-
-" Shift-Tab = previous suggestion
-inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
-
-" Ctrl-Space = trigger completion
-inoremap <silent><expr> <C-Space> coc#refresh()
-
-" Helper function to handle backspace properly
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1] =~# '\s'
+  " Formatting
+  let g:lsp_format_sync_timeout = 1000
+  nnoremap <buffer> <leader>f <plug>(lsp-document-format)
+  let g:which_key_map.f = '[F]ormat buffer'
 endfunction
 
-" Show diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+augroup lsp_install
+  au!
+  " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+  autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
 
-" Go to definition / references
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" [[ Configure completion ]]
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR>    pumvisible() ? asyncomplete#close_popup() : "\<CR>""
+
+let g:asyncomplete_auto_completeopt = 0
+set completeopt=menuone,noinsert,noselect,preview
+
+
+" The line beneath this is called `modeline`. See `:help modeline`
+" vim: ts=2 sts=2 sw=2 et
 
